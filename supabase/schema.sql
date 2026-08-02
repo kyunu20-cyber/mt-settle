@@ -1,8 +1,6 @@
 -- MT 정산 — Supabase 스키마
 -- 사용법: Supabase 대시보드 → SQL Editor → 아래 전체 붙여넣고 Run
 
-create extension if not exists pgcrypto;
-
 -- 정산판 1개 = 1행. data(jsonb)에 참가자·지출 전체를 담음.
 create table if not exists public.boards (
   id          uuid primary key default gen_random_uuid(),
@@ -33,7 +31,7 @@ set search_path = public
 as $$
 declare
   v_id uuid;
-  v_token text := encode(gen_random_bytes(16), 'hex');
+  v_token text := replace(gen_random_uuid()::text, '-', '') || replace(gen_random_uuid()::text, '-', '');
 begin
   insert into public.boards (title, data, edit_token)
   values (coalesce(p_title, 'MT 정산'), coalesce(p_data, '{}'::jsonb), v_token)
