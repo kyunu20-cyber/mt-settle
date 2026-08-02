@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Board, Participant } from '../types'
+import { defaultStatus } from '../types'
 import { newId } from '../lib/format'
 
 type Props = {
@@ -8,20 +9,44 @@ type Props = {
   readOnly?: boolean
 }
 
+/** 쉼표·공백·줄바꿈으로 여러 이름 분리. 괄호 메모는 앞 이름에 붙임. */
+function parseNames(raw: string): string[] {
+  const tokens = raw
+    .split(/[,\n]+/)
+    .flatMap((seg) => seg.split(/\s+/))
+    .map((t) => t.trim())
+    .filter(Boolean)
+  const names: string[] = []
+  for (const tok of tokens) {
+    if (tok.startsWith('(') && names.length > 0) {
+      names[names.length - 1] = `${names[names.length - 1]} ${tok}`
+    } else {
+      names.push(tok)
+    }
+  }
+  return names
+}
+
 export default function RosterPanel({ board, onChange, readOnly }: Props) {
   const [name, setName] = useState('')
 
-  const add = () => {
-    const trimmed = name.trim()
-    if (!trimmed) return
+  const seedPayments = (): Participant['payments'] => {
     const payments: Participant['payments'] = {}
     board.collections.forEach((c) => {
-      payments[c.id] = { amount: c.defaultAmount, paid: false }
+      payments[c.id] = { amount: c.defaultAmount, status: defaultStatus(c) }
     })
-    onChange({
-      ...board,
-      participants: [...board.participants, { id: newId(), name: trimmed, payments }],
-    })
+    return payments
+  }
+
+  const add = () => {
+    const names = parseNames(name)
+    if (names.length === 0) return
+    const added = names.map((n) => ({
+      id: newId(),
+      name: n,
+      payments: seedPayments(),
+    }))
+    onChange({ ...board, participants: [...board.participants, ...added] })
     setName('')
   }
 

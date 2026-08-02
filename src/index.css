@@ -214,6 +214,40 @@ button.del {
   color: var(--ok);
 }
 
+.unpaidbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.unpaidbox.on {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+.status-badge {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.paid {
+  color: var(--ok);
+}
+
+.status-badge.unpaid {
+  color: var(--warn);
+}
+
+.status-badge.none {
+  color: var(--muted);
+  font-weight: 400;
+}
+
 .mini-summary {
   margin-top: 12px;
   padding-top: 12px;
@@ -358,6 +392,64 @@ button.ghost:disabled {
 
 .paid-list {
   color: var(--ok);
+}
+
+.panel-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title-row .panel-title-input {
+  margin-bottom: 12px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid #dbe4ff;
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.panel h2 .tag {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.panel-title-row .tag {
+  margin-bottom: 12px;
+}
+
+.participant {
+  flex-wrap: wrap;
+}
+
+.join {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.join.on {
+  color: var(--accent);
+}
+
+.opt-out {
+  opacity: 0.72;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .balance-tile b.pos {
