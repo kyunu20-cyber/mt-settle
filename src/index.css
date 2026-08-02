@@ -72,6 +72,58 @@ body {
   font-weight: 700;
 }
 
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-head-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.panel-head h2 {
+  margin: 0;
+}
+
+.panel-head .panel-title-input,
+.panel-head .panel-title-row,
+.panel-head .panel-title-row .panel-title-input,
+.panel-head .panel-title-row .tag {
+  margin-bottom: 0;
+}
+
+.panel-body {
+  margin-top: 14px;
+}
+
+.collapse-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 4px 2px;
+  color: var(--muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.collapse-summary {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  max-width: 46vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  font-size: 14px;
+  color: var(--muted);
+}
+
 .row,
 .add-row,
 .add-expense {
@@ -297,6 +349,47 @@ button.del {
   color: var(--muted);
   font-size: 12px;
   padding-top: 8px;
+}
+
+.sticky-summary {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  background: var(--bg);
+  box-shadow: 0 6px 10px -8px rgba(0, 0, 0, 0.25);
+}
+
+.sticky-summary .stat {
+  flex: 1;
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sticky-summary .stat span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.sticky-summary .stat b {
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sticky-summary .stat b.pos {
+  color: var(--ok);
+}
+
+.sticky-summary .stat b.neg {
+  color: var(--warn);
 }
 
 .sharebar {

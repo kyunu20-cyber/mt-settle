@@ -8,6 +8,7 @@ import {
   participantsIn,
   unpaidFor,
 } from '../lib/calc'
+import CollapsePanel from './CollapsePanel'
 
 type Props = {
   board: Board
@@ -80,24 +81,33 @@ export default function CollectionPanel({
     s === 'unpaid' ? '미납' : s === 'paid' ? '납부' : '불참'
 
   return (
-    <section className="panel">
-      {readOnly ? (
-        <h2>
-          {collection.name}
-          {optional && <span className="tag">선택</span>}
-        </h2>
-      ) : (
-        <div className="panel-title-row">
-          <input
-            className="panel-title-input"
-            value={collection.name}
-            onChange={(e) => patchCollection({ name: e.target.value })}
-            aria-label="항목 이름"
-          />
-          {optional && <span className="tag">선택</span>}
-        </div>
-      )}
-
+    <CollapsePanel
+      defaultOpen={false}
+      header={
+        readOnly ? (
+          <h2>
+            {collection.name}
+            {optional && <span className="tag">선택</span>}
+          </h2>
+        ) : (
+          <div className="panel-title-row">
+            <input
+              className="panel-title-input"
+              value={collection.name}
+              onChange={(e) => patchCollection({ name: e.target.value })}
+              aria-label="항목 이름"
+            />
+            {optional && <span className="tag">선택</span>}
+          </div>
+        )
+      }
+      summary={
+        <>
+          걷힘 {won(collected)} / {won(expected)}
+          {optional && ` · 참여 ${joined.length}`}
+        </>
+      }
+    >
       {!readOnly && (
         <div className="row">
           <label className="field">
@@ -216,6 +226,6 @@ export default function CollectionPanel({
           </div>
         )}
       </div>
-    </section>
+    </CollapsePanel>
   )
 }

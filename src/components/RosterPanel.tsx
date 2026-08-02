@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Board, Participant } from '../types'
 import { defaultStatus } from '../types'
 import { newId } from '../lib/format'
+import CollapsePanel from './CollapsePanel'
 
 type Props = {
   board: Board
@@ -57,11 +58,13 @@ export default function RosterPanel({ board, onChange, readOnly }: Props) {
     })
 
   return (
-    <section className="panel">
-      <h2>
-        참가자 <span className="count">{board.participants.length}명</span>
-      </h2>
-
+    <CollapsePanel
+      header={
+        <h2>
+          참가자 <span className="count">{board.participants.length}명</span>
+        </h2>
+      }
+    >
       {!readOnly && (
         <div className="add-row">
           <input
@@ -90,6 +93,6 @@ export default function RosterPanel({ board, onChange, readOnly }: Props) {
           ))}
         </ul>
       )}
-    </section>
+    </CollapsePanel>
   )
 }

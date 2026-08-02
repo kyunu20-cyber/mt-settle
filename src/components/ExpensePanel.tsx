@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Board, Expense } from '../types'
 import { newId, won } from '../lib/format'
 import { expenseTotal, perPerson } from '../lib/calc'
+import CollapsePanel from './CollapsePanel'
 
 type Props = {
   board: Board
@@ -43,9 +44,15 @@ export default function ExpensePanel({ board, onChange, readOnly }: Props) {
   const each = perPerson(total, board.participants.length)
 
   return (
-    <section className="panel">
-      <h2>지출 정산</h2>
-
+    <CollapsePanel
+      header={<h2>지출 정산</h2>}
+      summary={
+        <>
+          총 {won(total)} · 1인당 {won(each)}
+        </>
+      }
+      defaultOpen={false}
+    >
       {!readOnly && (
         <div className="add-expense">
           <input
@@ -112,6 +119,6 @@ export default function ExpensePanel({ board, onChange, readOnly }: Props) {
           참가 {board.participants.length}명 · 1인당 <b>{won(each)}</b>
         </div>
       </div>
-    </section>
+    </CollapsePanel>
   )
 }
