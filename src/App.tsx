@@ -8,7 +8,7 @@ import { summarize } from './lib/calc'
 import { won } from './lib/format'
 import { isCloudEnabled } from './lib/supabase'
 import { createBoard, fetchBoard, saveBoard } from './lib/cloud'
-import { editHash, parseRoute, viewUrl, type Route } from './lib/route'
+import { editHash, editUrl, parseRoute, viewUrl, type Route } from './lib/route'
 
 const STORAGE_KEY = 'mt-settle-board'
 
@@ -266,21 +266,37 @@ function ShareBar({
   }
 
   if (route.mode === 'edit') {
-    const link = viewUrl(route.id)
-    const copy = () => navigator.clipboard?.writeText(link).catch(() => {})
+    const vLink = viewUrl(route.id)
+    const eLink = editUrl(route.id, route.token)
+    const copy = (t: string) => navigator.clipboard?.writeText(t).catch(() => {})
     return (
       <div className="sharebar">
-        <div className="link-row">
-          <input
-            className="link"
-            value={link}
-            readOnly
-            onFocus={(e) => e.currentTarget.select()}
-          />
-          <button onClick={copy}>복사</button>
+        <div className="share-block">
+          <span className="share-label">✏️ 편집 링크 · 같이 정리할 사람</span>
+          <div className="link-row">
+            <input
+              className="link"
+              value={eLink}
+              readOnly
+              onFocus={(e) => e.currentTarget.select()}
+            />
+            <button onClick={() => copy(eLink)}>복사</button>
+          </div>
+        </div>
+        <div className="share-block">
+          <span className="share-label">👀 조회 링크 · 참가자(읽기전용)</span>
+          <div className="link-row">
+            <input
+              className="link"
+              value={vLink}
+              readOnly
+              onFocus={(e) => e.currentTarget.select()}
+            />
+            <button onClick={() => copy(vLink)}>복사</button>
+          </div>
         </div>
         <div className="sharebar-foot">
-          <span className="hint">참가자에게 이 링크 공유 · {statusText(status)}</span>
+          <span className="hint">{statusText(status)}</span>
           <button className="linklike" onClick={onNew}>
             새 정산 만들기
           </button>

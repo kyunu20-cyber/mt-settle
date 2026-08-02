@@ -326,6 +326,18 @@ button.del {
   color: var(--muted);
 }
 
+.share-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.share-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
 .sharebar-foot {
   display: flex;
   justify-content: space-between;

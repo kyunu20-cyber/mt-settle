@@ -17,3 +17,6 @@ export const viewHash = (id: string) => `#/b/${id}`
 
 export const viewUrl = (id: string) =>
   `${location.origin}${location.pathname}${viewHash(id)}`
+
+export const editUrl = (id: string, token: string) =>
+  `${location.origin}${location.pathname}${editHash(id, token)}`
