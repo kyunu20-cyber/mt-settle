@@ -22,6 +22,33 @@ function loadLocalBoard(): Board {
   return emptyBoard()
 }
 
+const ADMIN_KEY = 'mt-settle-admin'
+type AdminRef = { id: string; token: string }
+
+function loadAdmin(): AdminRef | null {
+  try {
+    const raw = localStorage.getItem(ADMIN_KEY)
+    if (raw) return JSON.parse(raw) as AdminRef
+  } catch {
+    /* ignore */
+  }
+  return null
+}
+const saveAdmin = (ref: AdminRef) => {
+  try {
+    localStorage.setItem(ADMIN_KEY, JSON.stringify(ref))
+  } catch {
+    /* ignore */
+  }
+}
+const clearAdmin = () => {
+  try {
+    localStorage.removeItem(ADMIN_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
 type Status = 'idle' | 'loading' | 'saving' | 'saved' | 'error' | 'notfound'
 
 const statusText = (s: Status) =>
@@ -40,6 +67,14 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
+  // 최초 로드: 저장된 관리자 정산판이 있으면 이어서 편집으로 이동
+  useEffect(() => {
+    if (parseRoute().mode !== 'local') return
+    const saved = loadAdmin()
+    if (saved) location.hash = editHash(saved.id, saved.token)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(() => {
     let cancelled = false
     if (route.mode === 'local') {
@@ -54,6 +89,7 @@ export default function App() {
         if (!b) return setStatus('notfound')
         setBoard({ ...emptyBoard(), ...b })
         setStatus('idle')
+        if (route.mode === 'edit') saveAdmin({ id: route.id, token: route.token })
       })
       .catch(() => !cancelled && setStatus('error'))
     return () => {
@@ -89,12 +125,25 @@ export default function App() {
     setPublishing(true)
     try {
       const { id, token } = await createBoard(board)
+      saveAdmin({ id, token })
       location.hash = editHash(id, token)
     } catch {
       alert('업로드 실패. 잠시 후 다시 시도해주세요.')
     } finally {
       setPublishing(false)
     }
+  }
+
+  const startNew = () => {
+    clearAdmin()
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch {
+      /* ignore */
+    }
+    setBoard(emptyBoard())
+    setStatus('idle')
+    location.hash = ''
   }
 
   if (status === 'loading') {
@@ -108,6 +157,9 @@ export default function App() {
     return (
       <div className="app">
         <p className="empty">정산표를 찾을 수 없어요. 링크를 확인해주세요.</p>
+        <button className="ghost" onClick={startNew}>
+          새 정산 만들기
+        </button>
       </div>
     )
   }
@@ -137,6 +189,7 @@ export default function App() {
           status={status}
           publishing={publishing}
           onPublish={publish}
+          onNew={startNew}
           cloudEnabled={isCloudEnabled}
         />
       )}
@@ -185,12 +238,14 @@ function ShareBar({
   status,
   publishing,
   onPublish,
+  onNew,
   cloudEnabled,
 }: {
   route: Route
   status: Status
   publishing: boolean
   onPublish: () => void
+  onNew: () => void
   cloudEnabled: boolean
 }) {
   if (route.mode === 'local') {
@@ -224,7 +279,12 @@ function ShareBar({
           />
           <button onClick={copy}>복사</button>
         </div>
-        <span className="hint">참가자에게 이 링크 공유 · {statusText(status)}</span>
+        <div className="sharebar-foot">
+          <span className="hint">참가자에게 이 링크 공유 · {statusText(status)}</span>
+          <button className="linklike" onClick={onNew}>
+            새 정산 만들기
+          </button>
+        </div>
       </div>
     )
   }

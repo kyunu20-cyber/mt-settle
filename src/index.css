@@ -326,6 +326,22 @@ button.del {
   color: var(--muted);
 }
 
+.sharebar-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.linklike {
+  background: none;
+  color: var(--accent);
+  padding: 0;
+  font-size: 12px;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
 .count {
   font-size: 14px;
   font-weight: 500;

@@ -155,17 +155,6 @@ export default function CollectionPanel({
               <li key={p.id} className="participant">
                 <span className="pname">{p.name}</span>
 
-                {optional && !readOnly && (
-                  <label className="join on">
-                    <input
-                      type="checkbox"
-                      checked
-                      onChange={() => setJoin(p.id, false, pay)}
-                    />
-                    참여
-                  </label>
-                )}
-
                 {readOnly ? (
                   <span className="pdue">{won(pay.amount)}</span>
                 ) : (
@@ -194,6 +183,16 @@ export default function CollectionPanel({
                     />
                     미납
                   </label>
+                )}
+
+                {optional && !readOnly && (
+                  <button
+                    className="del"
+                    title="버스에서 제외"
+                    onClick={() => setJoin(p.id, false, pay)}
+                  >
+                    ✕
+                  </button>
                 )}
               </li>
             )
