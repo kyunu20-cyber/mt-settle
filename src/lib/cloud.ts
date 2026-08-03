@@ -1,10 +1,10 @@
 import { supabase } from './supabase'
 import type { Board } from '../types'
 
-/** 새 보드 생성 → 조회용 code + 편집용 token 반환 */
+/** 새 보드 생성 → 조회용 id + 편집용 token 반환 */
 export async function createBoard(
   board: Board,
-): Promise<{ code: string; token: string }> {
+): Promise<{ id: string; token: string }> {
   if (!supabase) throw new Error('cloud disabled')
   const { data, error } = await supabase.rpc('create_board', {
     p_title: board.title,
@@ -12,18 +12,18 @@ export async function createBoard(
   })
   if (error) throw error
   const row = Array.isArray(data) ? data[0] : data
-  return { code: row.code, token: row.edit_token }
+  return { id: row.id, token: row.edit_token }
 }
 
 /** 토큰이 맞을 때만 저장(수정) */
 export async function saveBoard(
-  code: string,
+  id: string,
   token: string,
   board: Board,
 ): Promise<void> {
   if (!supabase) throw new Error('cloud disabled')
   const { error } = await supabase.rpc('save_board', {
-    p_code: code,
+    p_id: id,
     p_token: token,
     p_title: board.title,
     p_data: board,
@@ -32,12 +32,12 @@ export async function saveBoard(
 }
 
 /** 조회 (읽기전용) — edit_token은 컬럼 권한으로 애초에 안 내려옴 */
-export async function fetchBoard(code: string): Promise<Board | null> {
+export async function fetchBoard(id: string): Promise<Board | null> {
   if (!supabase) throw new Error('cloud disabled')
   const { data, error } = await supabase
     .from('boards')
     .select('data')
-    .eq('code', code)
+    .eq('id', id)
     .maybeSingle()
   if (error) throw error
   if (!data) return null

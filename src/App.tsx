@@ -23,7 +23,7 @@ function loadLocalBoard(): Board {
 }
 
 const ADMIN_KEY = 'mt-settle-admin'
-type AdminRef = { code: string; token: string }
+type AdminRef = { id: string; token: string }
 
 function loadAdmin(): AdminRef | null {
   try {
@@ -71,7 +71,7 @@ export default function App() {
   useEffect(() => {
     if (parseRoute().mode !== 'local') return
     const saved = loadAdmin()
-    if (saved) location.hash = editHash(saved.code, saved.token)
+    if (saved) location.hash = editHash(saved.id, saved.token)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -83,14 +83,14 @@ export default function App() {
       return
     }
     setStatus('loading')
-    fetchBoard(route.code)
+    fetchBoard(route.id)
       .then((b) => {
         if (cancelled) return
         if (!b) return setStatus('notfound')
         setBoard({ ...emptyBoard(), ...b })
         setStatus('idle')
         if (route.mode === 'edit')
-          saveAdmin({ code: route.code, token: route.token })
+          saveAdmin({ id: route.id, token: route.token })
       })
       .catch(() => !cancelled && setStatus('error'))
     return () => {
@@ -113,7 +113,7 @@ export default function App() {
         setStatus('saving')
         if (saveTimer.current) clearTimeout(saveTimer.current)
         saveTimer.current = window.setTimeout(() => {
-          saveBoard(route.code, route.token, next)
+          saveBoard(route.id, route.token, next)
             .then(() => setStatus('saved'))
             .catch(() => setStatus('error'))
         }, 800)
@@ -125,9 +125,9 @@ export default function App() {
   const publish = async () => {
     setPublishing(true)
     try {
-      const { code, token } = await createBoard(board)
-      saveAdmin({ code, token })
-      location.hash = editHash(code, token)
+      const { id, token } = await createBoard(board)
+      saveAdmin({ id, token })
+      location.hash = editHash(id, token)
     } catch {
       alert('업로드 실패. 잠시 후 다시 시도해주세요.')
     } finally {
@@ -278,8 +278,8 @@ function ShareBar({
   }
 
   if (route.mode === 'edit') {
-    const vLink = viewUrl(route.code)
-    const eLink = editUrl(route.code, route.token)
+    const vLink = viewUrl(route.id)
+    const eLink = editUrl(route.id, route.token)
     const copy = (t: string) => navigator.clipboard?.writeText(t).catch(() => {})
     return (
       <div className="sharebar">
