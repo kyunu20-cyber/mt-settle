@@ -49,6 +49,20 @@ const clearAdmin = () => {
   }
 }
 
+// URL 토큰이 잘렸을 때, 기기에 저장된 더 온전한 토큰을 우선 사용
+function bestToken(id: string, urlToken: string): string {
+  const saved = loadAdmin()
+  if (saved && saved.id === id && saved.token && saved.token.length > urlToken.length) {
+    return saved.token
+  }
+  return urlToken
+}
+
+const isTokenErr = (e: unknown) => {
+  const m = String((e as { message?: string })?.message ?? e)
+  return /invalid token|not found|P0001/i.test(m)
+}
+
 type Status = 'idle' | 'loading' | 'saving' | 'saved' | 'error' | 'notfound'
 
 const statusText = (s: Status) =>
@@ -61,6 +75,7 @@ export default function App() {
   const [route, setRoute] = useState<Route>(parseRoute)
   const [board, setBoard] = useState<Board>(loadLocalBoard)
   const [status, setStatus] = useState<Status>('idle')
+  const [tokenError, setTokenError] = useState(false)
   const [publishing, setPublishing] = useState(false)
   const saveTimer = useRef<number | null>(null)
   const boardRef = useRef(board)
@@ -81,7 +96,7 @@ export default function App() {
       if (r.mode === 'edit' && saveTimer.current) {
         clearTimeout(saveTimer.current)
         saveTimer.current = null
-        saveBoard(r.id, r.token, boardRef.current).catch(() => {})
+        saveBoard(r.id, bestToken(r.id, r.token), boardRef.current).catch(() => {})
       }
     }
     const onVis = () => document.hidden && flush()
@@ -115,8 +130,15 @@ export default function App() {
         if (!b) return setStatus('notfound')
         setBoard({ ...emptyBoard(), ...b })
         setStatus('idle')
-        if (route.mode === 'edit')
-          saveAdmin({ id: route.id, token: route.token })
+        if (route.mode === 'edit') {
+          // 이미 같은 보드의 더 온전한 토큰이 있으면 덮어쓰지 않음
+          const saved = loadAdmin()
+          if (
+            !(saved && saved.id === route.id && saved.token.length >= route.token.length)
+          ) {
+            saveAdmin({ id: route.id, token: route.token })
+          }
+        }
       })
       .catch(() => !cancelled && setStatus('error'))
     return () => {
@@ -139,9 +161,15 @@ export default function App() {
         setStatus('saving')
         if (saveTimer.current) clearTimeout(saveTimer.current)
         saveTimer.current = window.setTimeout(() => {
-          saveBoard(route.id, route.token, next)
-            .then(() => setStatus('saved'))
-            .catch(() => setStatus('error'))
+          saveBoard(route.id, bestToken(route.id, route.token), next)
+            .then(() => {
+              setStatus('saved')
+              setTokenError(false)
+            })
+            .catch((e) => {
+              setStatus('error')
+              setTokenError(isTokenErr(e))
+            })
         }, 800)
       }
     },
@@ -169,9 +197,15 @@ export default function App() {
       saveTimer.current = null
     }
     setStatus('saving')
-    saveBoard(r.id, r.token, boardRef.current)
-      .then(() => setStatus('saved'))
-      .catch(() => setStatus('error'))
+    saveBoard(r.id, bestToken(r.id, r.token), boardRef.current)
+      .then(() => {
+        setStatus('saved')
+        setTokenError(false)
+      })
+      .catch((e) => {
+        setStatus('error')
+        setTokenError(isTokenErr(e))
+      })
   }, [])
 
   // Cmd+S / Ctrl+S 로 즉시 저장 (브라우저 기본 저장창 방지)
@@ -247,16 +281,23 @@ export default function App() {
           </div>
         </div>
         {route.mode === 'edit' && (
-          <div className="save-line-row">
-            <span className={`save-line ${status}`}>{editSaveText(status)}</span>
-            <button
-              className="save-btn"
-              onClick={commitSave}
-              disabled={status === 'saving'}
-            >
-              저장
-            </button>
-          </div>
+          <>
+            <div className="save-line-row">
+              <span className={`save-line ${status}`}>{editSaveText(status)}</span>
+              <button
+                className="save-btn"
+                onClick={commitSave}
+                disabled={status === 'saving'}
+              >
+                저장
+              </button>
+            </div>
+            {status === 'error' && tokenError && (
+              <div className="save-err">
+                편집 링크가 잘린 것 같아요 · 처음 만든 편집 링크로 다시 열어주세요
+              </div>
+            )}
+          </>
         )}
       </div>
 

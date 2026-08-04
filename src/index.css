@@ -402,6 +402,13 @@ button.del {
   color: var(--warn);
 }
 
+.save-err {
+  font-size: 11px;
+  color: var(--warn);
+  text-align: right;
+  line-height: 1.4;
+}
+
 .sticky-summary .stat {
   flex: 1;
   min-width: 0;
