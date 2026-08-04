@@ -54,17 +54,43 @@ type Status = 'idle' | 'loading' | 'saving' | 'saved' | 'error' | 'notfound'
 const statusText = (s: Status) =>
   s === 'saving' ? '저장 중…' : s === 'saved' ? '저장됨' : s === 'error' ? '저장 실패 · 재시도됨' : ''
 
+const editSaveText = (s: Status) =>
+  s === 'saving' ? '저장 중…' : s === 'error' ? '⚠ 저장 안 됨 · 재시도' : '✓ 저장됨'
+
 export default function App() {
   const [route, setRoute] = useState<Route>(parseRoute)
   const [board, setBoard] = useState<Board>(loadLocalBoard)
   const [status, setStatus] = useState<Status>('idle')
   const [publishing, setPublishing] = useState(false)
   const saveTimer = useRef<number | null>(null)
+  const boardRef = useRef(board)
+  boardRef.current = board
+  const routeRef = useRef(route)
+  routeRef.current = route
 
   useEffect(() => {
     const onHash = () => setRoute(parseRoute())
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
+  }, [])
+
+  // 탭을 벗어나거나 앱을 닫을 때, 대기 중인 저장을 즉시 반영
+  useEffect(() => {
+    const flush = () => {
+      const r = routeRef.current
+      if (r.mode === 'edit' && saveTimer.current) {
+        clearTimeout(saveTimer.current)
+        saveTimer.current = null
+        saveBoard(r.id, r.token, boardRef.current).catch(() => {})
+      }
+    }
+    const onVis = () => document.hidden && flush()
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('pagehide', flush)
+    return () => {
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('pagehide', flush)
+    }
   }, [])
 
   // 최초 로드: 저장된 관리자 정산판이 있으면 이어서 편집으로 이동
@@ -185,14 +211,19 @@ export default function App() {
       </header>
 
       <div className="sticky-summary">
-        <div className="stat">
-          <span>현재 있는 돈</span>
-          <b className={s.balance < 0 ? 'neg' : 'pos'}>{won(s.balance)}</b>
+        <div className="sticky-stats">
+          <div className="stat">
+            <span>현재 있는 돈</span>
+            <b className={s.balance < 0 ? 'neg' : 'pos'}>{won(s.balance)}</b>
+          </div>
+          <div className="stat">
+            <span>쓴 돈</span>
+            <b>{won(s.expenseTotal)}</b>
+          </div>
         </div>
-        <div className="stat">
-          <span>쓴 돈</span>
-          <b>{won(s.expenseTotal)}</b>
-        </div>
+        {route.mode === 'edit' && (
+          <div className={`save-line ${status}`}>{editSaveText(status)}</div>
+        )}
       </div>
 
       {!readOnly && (
