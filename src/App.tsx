@@ -161,6 +161,18 @@ export default function App() {
     }
   }
 
+  const saveNow = () => {
+    if (route.mode !== 'edit') return
+    if (saveTimer.current) {
+      clearTimeout(saveTimer.current)
+      saveTimer.current = null
+    }
+    setStatus('saving')
+    saveBoard(route.id, route.token, board)
+      .then(() => setStatus('saved'))
+      .catch(() => setStatus('error'))
+  }
+
   const startNew = () => {
     clearAdmin()
     try {
@@ -222,7 +234,16 @@ export default function App() {
           </div>
         </div>
         {route.mode === 'edit' && (
-          <div className={`save-line ${status}`}>{editSaveText(status)}</div>
+          <div className="save-line-row">
+            <span className={`save-line ${status}`}>{editSaveText(status)}</span>
+            <button
+              className="save-btn"
+              onClick={saveNow}
+              disabled={status === 'saving'}
+            >
+              저장
+            </button>
+          </div>
         )}
       </div>
 
