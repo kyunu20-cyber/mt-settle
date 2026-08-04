@@ -161,17 +161,30 @@ export default function App() {
     }
   }
 
-  const saveNow = () => {
-    if (route.mode !== 'edit') return
+  const commitSave = useCallback(() => {
+    const r = routeRef.current
+    if (r.mode !== 'edit') return
     if (saveTimer.current) {
       clearTimeout(saveTimer.current)
       saveTimer.current = null
     }
     setStatus('saving')
-    saveBoard(route.id, route.token, board)
+    saveBoard(r.id, r.token, boardRef.current)
       .then(() => setStatus('saved'))
       .catch(() => setStatus('error'))
-  }
+  }, [])
+
+  // Cmd+S / Ctrl+S 로 즉시 저장 (브라우저 기본 저장창 방지)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault()
+        commitSave()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [commitSave])
 
   const startNew = () => {
     clearAdmin()
@@ -238,7 +251,7 @@ export default function App() {
             <span className={`save-line ${status}`}>{editSaveText(status)}</span>
             <button
               className="save-btn"
-              onClick={saveNow}
+              onClick={commitSave}
               disabled={status === 'saving'}
             >
               저장
