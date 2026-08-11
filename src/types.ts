@@ -22,6 +22,7 @@ export type Expense = {
   amount: number
   payer: string
   link: string
+  receipt: string // 영수증 이미지 URL (Supabase Storage)
   amountSource: 'manual' | 'paste'
 }
 

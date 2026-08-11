@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent } from 'react'
 import type { Board, Expense } from '../types'
 import { newId, won } from '../lib/format'
 import { expenseTotal, perPerson } from '../lib/calc'
+import { uploadReceipt } from '../lib/receipt'
 import CollapsePanel from './CollapsePanel'
 
 type Props = {
@@ -26,6 +27,7 @@ export default function ExpensePanel({ board, onChange, readOnly }: Props) {
       amount: value,
       payer,
       link: link.trim(),
+      receipt: '',
       amountSource: 'manual',
     }
     onChange({ ...board, expenses: [...board.expenses, e] })
@@ -38,6 +40,12 @@ export default function ExpensePanel({ board, onChange, readOnly }: Props) {
     onChange({
       ...board,
       expenses: board.expenses.filter((e) => e.id !== id),
+    })
+
+  const update = (id: string, patch: Partial<Expense>) =>
+    onChange({
+      ...board,
+      expenses: board.expenses.map((e) => (e.id === id ? { ...e, ...patch } : e)),
     })
 
   const total = expenseTotal(board.expenses)
@@ -101,6 +109,11 @@ export default function ExpensePanel({ board, onChange, readOnly }: Props) {
                 {e.payer && <em className="payer"> · {e.payer}</em>}
               </span>
               <span className="eamount">{won(e.amount)}</span>
+              <ReceiptUpload
+                receipt={e.receipt || ''}
+                onChange={(url) => update(e.id, { receipt: url })}
+                readOnly={readOnly}
+              />
               {!readOnly && (
                 <button className="del" onClick={() => remove(e.id)}>
                   ✕
@@ -120,5 +133,60 @@ export default function ExpensePanel({ board, onChange, readOnly }: Props) {
         </div>
       </div>
     </CollapsePanel>
+  )
+}
+
+function ReceiptUpload({
+  receipt,
+  onChange,
+  readOnly,
+}: {
+  receipt: string
+  onChange: (url: string) => void
+  readOnly?: boolean
+}) {
+  const [busy, setBusy] = useState(false)
+
+  const onPick = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setBusy(true)
+    try {
+      const url = await uploadReceipt(file)
+      onChange(url)
+    } catch {
+      alert('영수증 업로드 실패. 잠시 후 다시 시도해주세요.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  if (receipt) {
+    return (
+      <span className="receipt">
+        <a href={receipt} target="_blank" rel="noreferrer">
+          <img src={receipt} alt="영수증" />
+        </a>
+        {!readOnly && (
+          <button
+            className="receipt-x"
+            onClick={() => onChange('')}
+            aria-label="영수증 삭제"
+          >
+            ✕
+          </button>
+        )}
+      </span>
+    )
+  }
+
+  if (readOnly) return null
+
+  return (
+    <label className={`receipt-add ${busy ? 'busy' : ''}`} title="영수증 첨부">
+      {busy ? '…' : '🧾'}
+      <input type="file" accept="image/*" hidden disabled={busy} onChange={onPick} />
+    </label>
   )
 }
