@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+:root { color-scheme: light dark; }
+body { font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+
+@layer components {
+  .inp { @apply w-full rounded border border-slate-300 bg-white px-2 py-1 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100; }
+  .btn { @apply rounded px-3 py-1.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40; }
+}
