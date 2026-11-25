@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>좌석 선택 · 모의 티켓</title><link rel="stylesheet" href="/style.css"></head>
+<body data-page="seats">
+<header class="top"><a href="/">🎫 MOCK TICKET</a><span class="badge">로컬 테스트 전용 모의 사이트</span></header>
+<main>
+<section class="card wide"><h1>좌석 선택</h1><div class="stage">STAGE</div>
+<div id="seat-map"></div>
+<div class="legend"><span class="seat available"></span>선택 가능 <span class="seat sold"></span>판매 완료 <span class="seat selected"></span>선택</div>
+<div class="selbar">선택 <strong id="selected-count">0</strong>매 · <span id="selected-list"></span> · 합계 <strong id="selected-total">0</strong>원
+<button id="hold-btn" class="primary" disabled>좌석 선택 완료</button></div></section>
+<div id="ad-layer" class="modal" hidden><div class="modal-box ad"><h2>🎉 굿즈 사전예약 오픈!</h2><p>공식 MD를 지금 확인하세요.</p>
+<button class="modal-close" id="ad-close" aria-label="광고 닫기">✕</button></div></div>
+</main>
+<script src="/app.js"></script>
+</body></html>

@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>보안문자 · 모의 티켓</title><link rel="stylesheet" href="/style.css"></head>
+<body data-page="captcha">
+<header class="top"><a href="/">🎫 MOCK TICKET</a><span class="badge">로컬 테스트 전용 모의 사이트</span></header>
+<main>
+<section class="card"><h1>자동입력 방지 문자</h1><p>아래 이미지의 문자를 입력해 주세요.</p>
+<img id="captcha-img" alt="보안문자" width="200" height="60"><button id="captcha-refresh" class="link">새로고침</button>
+<form id="captcha-form"><input id="captcha-input" autocomplete="off" maxlength="6" placeholder="문자 입력"> <button id="captcha-submit" class="primary">입력 완료</button></form>
+<p class="error" id="captcha-error"></p></section>
+</main>
+<script src="/app.js"></script>
+</body></html>

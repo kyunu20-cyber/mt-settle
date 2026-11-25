@@ -1,0 +1,18 @@
+{
+  "name": "ticket-lab",
+  "private": true,
+  "version": "0.1.0",
+  "description": "로컬 모의 티켓 예매 사이트 + Playwright 자동화 검증 랩",
+  "type": "module",
+  "scripts": {
+    "server": "node server/server.js",
+    "bot": "node bot/cli.js",
+    "demo": "node scripts/demo.js",
+    "test": "node --test --test-concurrency=1 \"test/**/*.test.js\"",
+    "test:unit": "node --test \"test/unit/*.test.js\"",
+    "test:e2e": "node --test --test-concurrency=1 \"test/e2e/*.test.js\""
+  },
+  "dependencies": {
+    "playwright": "1.63.0"
+  }
+}

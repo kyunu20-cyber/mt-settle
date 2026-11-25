@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>공연 상세 · 모의 티켓</title><link rel="stylesheet" href="/style.css"></head>
+<body data-page="index">
+<header class="top"><a href="/">🎫 MOCK TICKET</a><span class="badge">로컬 테스트 전용 모의 사이트</span></header>
+<main>
+<section class="card"><h1 id="event-title">…</h1><p id="event-venue"></p>
+<p>예매 오픈: <strong id="open-at"></strong></p>
+<p class="countdown" id="countdown"></p>
+<table id="grades" class="grades"></table>
+<button id="book-btn" class="primary" disabled>오픈 예정</button>
+<p class="hint" id="reload-hint" hidden>오픈 시각이 지났습니다. 새로고침 후 예매하세요.</p></section>
+<div id="notice-modal" class="modal" role="dialog" aria-label="공지사항" hidden><div class="modal-box"><h2>공지사항</h2>
+<p>본 공연은 1인 최대 4매까지 예매 가능합니다. 부정 예매 적발 시 취소될 수 있습니다.</p>
+<label><input type="checkbox"> 오늘 하루 보지 않기</label> <button class="modal-close" id="notice-close">닫기</button></div></div>
+</main>
+<script src="/app.js"></script>
+</body></html>

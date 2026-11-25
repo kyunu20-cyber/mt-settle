@@ -5,3 +5,5 @@ dist
 .DS_Store
 *.log
 .vercel
+ticket-lab/state/
+ticket-lab/test-results/
