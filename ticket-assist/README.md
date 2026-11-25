@@ -129,6 +129,7 @@ npm run build && npm start       # http://localhost:3100  (개발 모드: npm ru
 | `yes24` YES24 티켓 | assist-only | 〃 |
 | `melon` 멜론티켓 | assist-only | 〃 |
 | `ticketlink` 티켓링크 | assist-only | 〃 |
+| `coupangplay` 쿠팡플레이 | assist-only | 〃 (웹 `coupangplay.com` 기준. 앱 전용 판매는 지원 불가) |
 | `mock-assist` (/mock?mode=assist) | assist-only | 위 보조 모드 경로를 실제 사이트 접속 없이 검증하기 위한 로컬 전용 Adapter (같은 팩토리) |
 
 실제 사이트 Adapter 의 화면 조작이 비어 있는 이유:

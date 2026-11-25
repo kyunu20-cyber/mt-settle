@@ -41,6 +41,8 @@ export const nolAdapter = assistOnly('nol', 'NOL 티켓', ['nol.interpark.com', 
 export const yes24Adapter = assistOnly('yes24', 'YES24 티켓', ['ticket.yes24.com']);
 export const melonAdapter = assistOnly('melon', '멜론티켓', ['ticket.melon.com']);
 export const ticketlinkAdapter = assistOnly('ticketlink', '티켓링크', ['www.ticketlink.co.kr', 'ticketlink.co.kr']);
+// 쿠팡플레이(쿠플): 웹 도메인 기준. 티켓 판매가 앱 전용인 공연/경기는 브라우저 보조가 동작하지 않는다.
+export const coupangPlayAdapter = assistOnly('coupangplay', '쿠팡플레이', ['www.coupangplay.com', 'coupangplay.com']);
 
 // 보조 모드 엔진 경로를 실제 사이트에 접속하지 않고 검증하기 위한 로컬 전용 Adapter (같은 팩토리 사용)
 export const mockAssistAdapter = assistOnly('mock-assist', '모의 사이트 (보조 모드 검증용)', ['localhost', '127.0.0.1'],

@@ -1,8 +1,8 @@
 import type { SiteAdapter } from './types';
 import { mockAdapter } from './mock';
-import { nolAdapter, yes24Adapter, melonAdapter, ticketlinkAdapter, mockAssistAdapter } from './real';
+import { nolAdapter, yes24Adapter, melonAdapter, ticketlinkAdapter, coupangPlayAdapter, mockAssistAdapter } from './real';
 
-export const ADAPTERS: SiteAdapter[] = [mockAssistAdapter, mockAdapter, nolAdapter, yes24Adapter, melonAdapter, ticketlinkAdapter];
+export const ADAPTERS: SiteAdapter[] = [mockAssistAdapter, mockAdapter, nolAdapter, yes24Adapter, melonAdapter, ticketlinkAdapter, coupangPlayAdapter];
 
 export function resolveAdapter(url: string, id?: string): SiteAdapter {
   if (id) {

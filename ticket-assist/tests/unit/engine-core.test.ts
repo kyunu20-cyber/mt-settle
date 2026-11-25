@@ -96,13 +96,14 @@ describe('Adapter 레지스트리', () => {
     expect(resolveAdapter('https://ticket.melon.com/performance/index.htm?prodId=1').id).toBe('melon');
     expect(resolveAdapter('https://www.ticketlink.co.kr/product/1').id).toBe('ticketlink');
     expect(resolveAdapter('https://tickets.interpark.com/goods/1').id).toBe('nol');
+    expect(resolveAdapter('https://www.coupangplay.com/some/page').id).toBe('coupangplay');
     expect(() => resolveAdapter('https://unknown.example/')).toThrow(/지원하지 않는/);
     expect(() => resolveAdapter('http://localhost:3100/other')).toThrow();
     expect(() => resolveAdapter('https://ticket.yes24.com/', 'melon')).toThrow(/도메인이 아닙니다/);
   });
   it('실제 사이트 Adapter 는 보조 모드이며 화면 조작 메서드는 미지원 예외', async () => {
     const real = ADAPTERS.filter(a => !a.id.startsWith('mock'));
-    expect(real.map(a => a.id)).toEqual(['nol', 'yes24', 'melon', 'ticketlink']);
+    expect(real.map(a => a.id)).toEqual(['nol', 'yes24', 'melon', 'ticketlink', 'coupangplay']);
     for (const a of real) {
       expect(a.support).toMatchObject({ status: 'assist-only', automatedPayment: false });
       expect(a.completePayment).toBeUndefined();
